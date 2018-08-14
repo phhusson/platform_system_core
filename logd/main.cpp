@@ -450,6 +450,12 @@ int main(int argc, char* argv[]) {
         if (fdPmesg < 0) android::prdebug("Failed to open %s\n", proc_kmsg);
     }
 
+    bool auditd =
+        __android_logger_property_get_bool("ro.logd.auditd", BOOL_DEFAULT_TRUE);
+    if (drop_privs(klogd, auditd) != 0) {
+        return -1;
+    }
+
     // Reinit Thread
     sem_init(&reinit, 0, 0);
     sem_init(&uidName, 0, 0);
@@ -469,12 +475,6 @@ int main(int argc, char* argv[]) {
             }
         }
         pthread_attr_destroy(&attr);
-    }
-
-    bool auditd =
-        __android_logger_property_get_bool("ro.logd.auditd", BOOL_DEFAULT_TRUE);
-    if (drop_privs(klogd, auditd) != 0) {
-        return -1;
     }
 
     // Serves the purpose of managing the last logs times read on a
