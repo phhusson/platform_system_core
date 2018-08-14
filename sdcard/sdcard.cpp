@@ -102,7 +102,7 @@ static bool sdcardfs_setup(const std::string& source_path, const std::string& de
                            mode_t mask, bool derive_gid, bool default_normal, bool use_esdfs) {
     // Try several attempts, each time with one less option, to gracefully
     // handle older kernels that aren't updated yet.
-    for (int i = 0; i < 4; i++) {
+    for (int i = 2; i < 4; i++) {
         std::string new_opts;
         if (multi_user && i < 3) new_opts += "multiuser,";
         if (derive_gid && i < 2) new_opts += "derive_gid,";
