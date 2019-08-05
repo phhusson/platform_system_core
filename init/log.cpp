@@ -46,9 +46,9 @@ static void InitAborter(const char* abort_message) {
         has_aborted = true;
         // Do not queue "shutdown" trigger since we want to shutdown immediately and it's not likely
         // that we can even run the ActionQueue at this point.
-        DoReboot(ANDROID_RB_RESTART2, "reboot", "bootloader", false);
+        DoReboot(ANDROID_RB_RESTART2, "reboot", "recovery", false);
     } else {
-        RebootSystem(ANDROID_RB_RESTART2, "bootloader");
+        RebootSystem(ANDROID_RB_RESTART2, "recovery");
     }
 }
 
