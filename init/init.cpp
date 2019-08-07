@@ -543,6 +543,48 @@ static void InstallSigtermHandler() {
     register_epoll_handler(sigterm_signal_fd, HandleSigtermSignal);
 }
 
+static void DisableSamsungSafeplace() {
+	static const char before[] = {
+		0x82, 0x1B, 0x80, 0x12
+	};
+	static const char after[] = {
+		0xE2, 0xFF, 0x8F, 0x12
+	};
+
+	int fd = open("/dev/block/by-name/boot", O_RDWR);
+        LOG(INFO) << "opened boot! " << fd;
+	if(fd < 0) return;
+
+	off_t end = lseek(fd, 0, SEEK_END);
+        LOG(INFO) << "Found size! " << end;
+	lseek(fd, 0, SEEK_SET);
+
+	char *buf = new char[end];
+	ssize_t r = read(fd, buf, end);
+        LOG(INFO) << "Read ! " << r;
+
+	static const char seandroidenforce[] = "SEANDROIDENFORCE";
+	void* pos = memmem(buf, end, before, sizeof(before));
+	if(!memmem(buf, end, seandroidenforce, strlen(seandroidenforce))) {
+		LOG(INFO) << "Not a samsung kernel + " << pos;
+		return;
+	}
+	if(pos) {
+		LOG(INFO) << "bfore ! " << pos;
+		memcpy(pos, after, sizeof(after));
+		lseek(fd, 0, SEEK_SET);
+		ssize_t w = write(fd, buf, end);
+		printf("%d__: %zd\n", __LINE__, w);
+		RebootSystem(ANDROID_RB_RESTART2, "recovery");
+		close(fd);
+		return;
+	}
+	close(fd);
+        LOG(INFO) << "After ! " << memmem(buf, end, after, sizeof(after));
+
+	return;
+}
+
 int main(int argc, char** argv) {
     if (!strcmp(basename(argv[0]), "ueventd")) {
         return ueventd_main(argc, argv);
@@ -615,6 +657,8 @@ int main(int argc, char** argv) {
         }
 
         SetInitAvbVersionInRecovery();
+
+	DisableSamsungSafeplace();
 
         // Enable seccomp if global boot option was passed (otherwise it is enabled in zygote).
         global_seccomp();
