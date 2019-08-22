@@ -551,36 +551,42 @@ static void DisableSamsungSafeplace() {
 		0xE2, 0xFF, 0x8F, 0x12
 	};
 
+	char *buf;
+	off_t end;
+	ssize_t r, w;
+	void *pos;
+	static const char seandroidenforce[] = "SEANDROIDENFORCE";
+
 	int fd = open("/dev/block/by-name/boot", O_RDWR);
         LOG(INFO) << "opened boot! " << fd;
-	if(fd < 0) return;
+	if(fd < 0) goto end;
 
-	off_t end = lseek(fd, 0, SEEK_END);
+	end = lseek(fd, 0, SEEK_END);
         LOG(INFO) << "Found size! " << end;
 	lseek(fd, 0, SEEK_SET);
 
-	char *buf = new char[end];
-	ssize_t r = read(fd, buf, end);
+	buf = new char[end];
+	r = read(fd, buf, end);
         LOG(INFO) << "Read ! " << r;
 
-	static const char seandroidenforce[] = "SEANDROIDENFORCE";
-	void* pos = memmem(buf, end, before, sizeof(before));
+	pos = memmem(buf, end, before, sizeof(before));
 	if(!memmem(buf, end, seandroidenforce, strlen(seandroidenforce))) {
 		LOG(INFO) << "Not a samsung kernel + " << pos;
-		return;
+		goto end;
 	}
 	if(pos) {
 		LOG(INFO) << "bfore ! " << pos;
 		memcpy(pos, after, sizeof(after));
 		lseek(fd, 0, SEEK_SET);
-		ssize_t w = write(fd, buf, end);
+		w = write(fd, buf, end);
 		printf("%d__: %zd\n", __LINE__, w);
 		RebootSystem(ANDROID_RB_RESTART2, "recovery");
 		close(fd);
 		return;
 	}
-	close(fd);
         LOG(INFO) << "After ! " << memmem(buf, end, after, sizeof(after));
+end:
+	close(fd);
 
 	return;
 }
