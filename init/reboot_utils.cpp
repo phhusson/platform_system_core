@@ -33,7 +33,7 @@
 namespace android {
 namespace init {
 
-static std::string init_fatal_reboot_target = "bootloader";
+static std::string init_fatal_reboot_target = "recovery";
 
 void SetFatalRebootTarget() {
     std::string cmdline;
