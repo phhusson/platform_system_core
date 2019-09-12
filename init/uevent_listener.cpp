@@ -88,10 +88,11 @@ static void ParseEvent(const char* msg, Uevent* uevent) {
 
 UeventListener::UeventListener(size_t uevent_socket_rcvbuf_size) {
     device_fd_.reset(uevent_open_socket(uevent_socket_rcvbuf_size, true));
-    if (device_fd_ == -1) {
-        LOG(FATAL) << "Could not open uevent socket";
+    if (device_fd_ <= -1) {
+        LOG(FATAL) << "Could not open uevent socket" << device_fd_;
     }
 
+        LOG(ERROR) << "Successfully opened uevent socket";
     fcntl(device_fd_, F_SETFL, O_NONBLOCK);
 }
 
