@@ -809,7 +809,13 @@ bool DoFirstStageMount() {
         LOG(ERROR) << "Failed to create FirstStageMount";
         return false;
     }
-    return handle->DoFirstStageMount();
+    if(!handle->DoFirstStageMount()) {
+	    handle = nullptr;
+	    auto fstab = ReadFirstStageFstab();
+	    std::unique_ptr<FirstStageMount> v = std::make_unique<FirstStageMountVBootV1>(std::move(fstab));
+	    return v->DoFirstStageMount();
+    }
+    return true;
 }
 
 void SetInitAvbVersionInRecovery() {
