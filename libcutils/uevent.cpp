@@ -105,30 +105,24 @@ int uevent_open_socket(int buf_sz, bool passcred) {
     addr.nl_groups = 0xffffffff;
 
     s = socket(PF_NETLINK, SOCK_DGRAM | SOCK_CLOEXEC, NETLINK_KOBJECT_UEVENT);
-    if (s < 0) return -1;
+    if (s < 0) return -errno;
 
-    if (setsockopt(s, SOL_SOCKET, SO_RCVBUF, &buf_sz, sizeof(buf_sz)) < 0 ||
-          getsockopt(s, SOL_SOCKET, SO_RCVBUF, &buf_sz_readback, &optlen) < 0) {
-        close(s);
-        return -1;
-    }
-    /* Only if SO_RCVBUF was not effective, try SO_RCVBUFFORCE. Generally, we
-     * want to avoid SO_RCVBUFFORCE, because it generates SELinux denials in
-     * case we don't have CAP_NET_ADMIN. This is the case, for example, for
-     * healthd. */
-    if (buf_sz_readback < 2 * buf_sz) {
-        if (setsockopt(s, SOL_SOCKET, SO_RCVBUFFORCE, &buf_sz, sizeof(buf_sz)) < 0) {
-            close(s);
-            return -1;
-        }
-    }
+fcntl(s, F_SETFD, FD_CLOEXEC);
 
     setsockopt(s, SOL_SOCKET, SO_PASSCRED, &on, sizeof(on));
 
     if (bind(s, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
         close(s);
-        return -1;
+        return -errno - 1000;
     }
+
+    setsockopt(s, SOL_SOCKET, SO_RCVBUF, &buf_sz, sizeof(buf_sz));
+    getsockopt(s, SOL_SOCKET, SO_RCVBUF, &buf_sz_readback, &optlen);
+    /* Only if SO_RCVBUF was not effective, try SO_RCVBUFFORCE. Generally, we
+     * want to avoid SO_RCVBUFFORCE, because it generates SELinux denials in
+     * case we don't have CAP_NET_ADMIN. This is the case, for example, for
+     * healthd. */
+    setsockopt(s, SOL_SOCKET, SO_RCVBUFFORCE, &buf_sz, sizeof(buf_sz));
 
     return s;
 }
