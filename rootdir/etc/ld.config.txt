@@ -423,11 +423,11 @@ namespace.default.asan.permitted.paths +=           /odm
 namespace.default.asan.permitted.paths += /data/asan/vendor
 namespace.default.asan.permitted.paths +=           /vendor
 
-namespace.default.links = system,vndk%VNDK_IN_SYSTEM_NS%
+namespace.default.links = system,vndk%VNDK_IN_SYSTEM_NS%,runtime
 namespace.default.link.system.shared_libs = %LLNDK_LIBRARIES%
 namespace.default.link.vndk_in_system.shared_libs = %VNDK_USING_CORE_VARIANT_LIBRARIES%
-namespace.default.link.vndk.shared_libs  = %VNDK_SAMEPROCESS_LIBRARIES%
-namespace.default.link.vndk.shared_libs += %VNDK_CORE_LIBRARIES%
+namespace.default.link.vndk.allow_all_shared_libs = true
+namespace.default.link.runtime.shared_libs = libnativeloader.so
 
 ###############################################################################
 # "runtime" APEX namespace
