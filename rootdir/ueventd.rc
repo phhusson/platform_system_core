@@ -45,7 +45,7 @@ subsystem sound
 
 # these should not be world writable
 /dev/uhid                 0660   uhid       uhid
-/dev/uinput               0660   uhid       uhid
+/dev/uinput               0666   uhid       uhid
 /dev/rtc0                 0640   system     system
 /dev/tty0                 0660   root       system
 /dev/graphics/*           0660   root       graphics
