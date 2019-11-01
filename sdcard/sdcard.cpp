@@ -32,6 +32,7 @@
 #include <android-base/file.h>
 #include <android-base/logging.h>
 #include <android-base/macros.h>
+#include <android-base/properties.h>
 #include <android-base/stringprintf.h>
 #include <android-base/strings.h>
 
@@ -103,15 +104,15 @@ static bool sdcardfs_setup(const std::string& source_path, const std::string& de
                            mode_t mask, bool derive_gid, bool default_normal, bool unshared_obb,
                            bool use_esdfs) {
     // Add new options at the end of the vector.
+    int vndk = android::base::GetIntProperty<int>("ro.vndk.version", 29);
     std::vector<std::string> new_opts_list;
     if (multi_user) new_opts_list.push_back("multiuser,");
-    if (derive_gid) new_opts_list.push_back("derive_gid,");
-    if (default_normal) new_opts_list.push_back("default_normal,");
-    if (unshared_obb) new_opts_list.push_back("unshared_obb,");
+    if (derive_gid && vndk >= 27) new_opts_list.push_back("derive_gid,");
+    if (default_normal && vndk >= 28) new_opts_list.push_back("default_normal,");
+    if (unshared_obb && vndk >= 29) new_opts_list.push_back("unshared_obb,");
     // Try several attempts, each time with one less option, to gracefully
     // handle older kernels that aren't updated yet.
-    int first_option_to_try = property_get_bool("persist.sys.phh.modern_sdcard", false) ? 0 : 2;
-    for (int i = first_option_to_try; i <= new_opts_list.size(); ++i) {
+    for (int i = 0; i <= new_opts_list.size(); ++i) {
         std::string new_opts;
         for (int j = 0; j < new_opts_list.size() - i; ++j) {
             new_opts += new_opts_list[j];
