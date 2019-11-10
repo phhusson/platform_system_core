@@ -490,6 +490,7 @@ namespace.vndk.link.system.shared_libs += %SANITIZER_RUNTIME_LIBRARIES%
 namespace.vndk.link.default.allow_all_shared_libs = true
 
 namespace.vndk.link.runtime.shared_libs = %SANITIZER_RUNTIME_LIBRARIES%
+namespace.vndk.link.runtime.shared_libs += libnativeloader.so
 
 namespace.vndk.link.vndk_in_system.shared_libs = %VNDK_USING_CORE_VARIANT_LIBRARIES%
 
