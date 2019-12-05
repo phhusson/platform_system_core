@@ -205,7 +205,6 @@ int adbd_main(int server_port) {
     // descriptor will always be open.
     adbd_cloexec_auth_socket();
 
-#if 0
 #if defined(ALLOW_ADBD_NO_AUTH)
     // If ro.adb.secure is unset, default to no authentication required.
     auth_required = android::base::GetBoolProperty("ro.adb.secure", false);
@@ -214,8 +213,6 @@ int adbd_main(int server_port) {
         auth_required = android::base::GetBoolProperty("ro.adb.secure", false);
     }
 #endif
-#endif
-    auth_required = false;
 
     adbd_auth_init();
 
