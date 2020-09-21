@@ -66,10 +66,6 @@ using namespace std::chrono_literals;
 #include "daemon/logging.h"
 #endif
 
-#if ADB_HOST
-#include "client/usb.h"
-#endif
-
 std::string adb_version() {
     // Don't change the format of this --- it's parsed by ddmlib.
     return android::base::StringPrintf(
