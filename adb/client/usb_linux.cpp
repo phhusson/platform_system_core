@@ -18,8 +18,6 @@
 
 #include "sysdeps.h"
 
-#include "client/usb.h"
-
 #include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
@@ -50,6 +48,7 @@
 
 #include "adb.h"
 #include "transport.h"
+#include "usb.h"
 
 using namespace std::chrono_literals;
 using namespace std::literals;

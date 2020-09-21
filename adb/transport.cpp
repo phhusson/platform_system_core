@@ -1453,7 +1453,6 @@ void kick_all_tcp_devices() {
 
 #endif
 
-#if ADB_HOST
 void register_usb_transport(usb_handle* usb, const char* serial, const char* devpath,
                             unsigned writeable) {
     atransport* t = new atransport(writeable ? kCsOffline : kCsNoPerm);
@@ -1475,7 +1474,6 @@ void register_usb_transport(usb_handle* usb, const char* serial, const char* dev
 
     register_transport(t);
 }
-#endif
 
 #if ADB_HOST
 // This should only be used for transports with connection_state == kCsNoPerm.
