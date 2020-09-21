@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "sysdeps.h"
+#include "usb.h"
 
-#include "client/usb.h"
+#include "sysdeps.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -40,6 +40,7 @@
 #include "adb.h"
 #include "adb_utils.h"
 #include "transport.h"
+#include "usb.h"
 
 using android::base::StringPrintf;
 
