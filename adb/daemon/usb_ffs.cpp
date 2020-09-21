@@ -18,8 +18,6 @@
 
 #include "sysdeps.h"
 
-#include "daemon/usb_ffs.h"
-
 #include <linux/usb/ch9.h>
 #include <linux/usb/functionfs.h>
 
@@ -28,6 +26,7 @@
 #include <android-base/unique_fd.h>
 
 #include "adb.h"
+#include "adbd/usb.h"
 
 #define MAX_PACKET_SIZE_FS 64
 #define MAX_PACKET_SIZE_HS 512
