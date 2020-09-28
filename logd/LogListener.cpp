@@ -121,11 +121,8 @@ int LogListener::getLogSocket() {
     if (sock < 0) {  // logd started up in init.sh
         sock = socket_local_server(
             socketName, ANDROID_SOCKET_NAMESPACE_RESERVED, SOCK_DGRAM);
-
-        int on = 1;
-        if (setsockopt(sock, SOL_SOCKET, SO_PASSCRED, &on, sizeof(on))) {
-            return -1;
-        }
     }
+    int on = 1;
+    setsockopt(sock, SOL_SOCKET, SO_PASSCRED, &on, sizeof(on));
     return sock;
 }
