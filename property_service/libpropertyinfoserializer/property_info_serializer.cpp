@@ -19,6 +19,7 @@
 #include "property_info_parser/property_info_parser.h"
 
 #include <set>
+#include <iostream>
 
 #include "trie_builder.h"
 #include "trie_serializer.h"
@@ -34,7 +35,7 @@ bool BuildTrie(const std::vector<PropertyInfoEntry>& property_info,
 
   for (const auto& [name, context, type, is_exact] : property_info) {
     if (!trie_builder.AddToTrie(name, context, type, is_exact, error)) {
-      return false;
+      std::cerr << "Failed adding " << name << " to property trie... let's hope for the best" << std::endl;
     }
   }
 
